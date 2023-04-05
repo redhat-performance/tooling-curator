@@ -33,6 +33,7 @@ interface Repo {
     org: string
     name: string
     description: string
+    url: string
     labels: string[]
 }
 
@@ -130,7 +131,8 @@ export default class App extends React.Component<AppProps, AppState> {
                                             {repo.org}
                                         </TableCell>
                                         <TableCell>
-                                            {repo.name}
+                                            <a href={repo.url} target="_blank">{repo.name}</a>
+
                                         </TableCell>
                                         <TableCell>
                                             {repo.description}
