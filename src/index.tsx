@@ -11,6 +11,6 @@ const root = ReactDOM.createRoot(rootElement!);
 root.render(
     <ThemeProvider theme={theme}>
         <CssBaseline />
-        <App endpoint={"/data.json"} />
+        <App endpoint={"/repositories.json"} />
     </ThemeProvider>,
 );
