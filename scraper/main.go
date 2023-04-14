@@ -15,6 +15,7 @@ const (
 	repositoriesFile       = "../public/repositories.json"
 	ignoredTopicsFile      = "../public/ignored-topics.json"
 	ignoreRepositoriesFile = "../public/ignored-repositories.json"
+	topContributorsCount   = 3
 )
 
 var (
@@ -69,6 +70,7 @@ func main() {
 	loadConfiguration()
 
 	var repoData types.RepoData
+	var contactData []types.Contact
 	ir := *ignoredRepositories
 	for _, o := range *sOrgs {
 		ghrepos := github.GitHubRepositories(ctx, o)
@@ -88,8 +90,17 @@ func main() {
 			}
 			if !ignored {
 				topics := r.Topics
-				repo := types.Repo{Org: r.Owner.GetLogin(), Name: r.GetName(), URL: r.GetHTMLURL(), Description: r.GetDescription(), Labels: topics}
+				contributors := github.ListContrib(ctx, r.Owner.GetLogin(), r.GetName())
+				for n, contributor := range contributors {
+					if n > topContributorsCount-1 {
+						break
+					}
+					contacts := types.Contact{Username: *contributor.Login, URL: *contributor.HTMLURL}
+					contactData = append(contactData, contacts)
+				}
+				repo := types.Repo{Org: r.Owner.GetLogin(), Name: r.GetName(), URL: r.GetHTMLURL(), Description: r.GetDescription(), Labels: topics, Contacts: contactData}
 				repoData.Repos = append(repoData.Repos, repo)
+
 			}
 		}
 	}
@@ -98,5 +109,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error marshaling Repositories: %s", err)
 	}
+	//        fmt.Println(repoData.Repos)
 	os.WriteFile(repositoriesFile, reposJson, 0666)
 }
