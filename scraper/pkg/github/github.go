@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/google/go-github/github"
+	"github.com/google/go-github/v51/github"
 )
 
 func GitHubRepositories(ctx context.Context, org string) []*github.Repository {
