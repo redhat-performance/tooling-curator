@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
         "os"
+        "time"
 
 	"github.com/google/go-github/v51/github"
         "golang.org/x/oauth2"
@@ -36,3 +37,17 @@ func ListContrib(ctx context.Context, org string, repository string, client *git
         }
         return contributors
 }
+
+func ListCommits(ctx context.Context, org string, repository string, client *github.Client) []*github.RepositoryCommit {
+	opts := &github.CommitsListOptions{Since: time.Now().UTC().AddDate(-1,0,0)}
+        commits, _, err :=  client.Repositories.ListCommits(ctx, org, repository, opts)
+        if err != nil {
+                log.Fatalf("Error getting commits in last 1 year: %s", err)
+        }
+        return commits
+}
+
+
+	
+
+

@@ -89,7 +89,12 @@ func main() {
 			}
 			if !ignored {
 				var contactData []types.Contact
+				maintained := true
 				topics := r.Topics
+				commits := github.ListCommits(ctx, r.Owner.GetLogin(), r.GetName(), client)
+				if len(commits) < 1 {
+					maintained = false
+				}
 				contributors := github.ListContrib(ctx, r.Owner.GetLogin(), r.GetName(), client)
 				for n, contributor := range contributors {
 					if n > topContributorsCount-1 {
@@ -98,7 +103,7 @@ func main() {
 					contacts := types.Contact{Username: *contributor.Login, URL: *contributor.HTMLURL}
 					contactData = append(contactData, contacts)
 				}
-				repo := types.Repo{Org: r.Owner.GetLogin(), Name: r.GetName(), URL: r.GetHTMLURL(), Description: r.GetDescription(), Labels: topics, Contacts: contactData}
+				repo := types.Repo{Org: r.Owner.GetLogin(), Name: r.GetName(), URL: r.GetHTMLURL(), Description: r.GetDescription(), Labels: topics, Maintained: maintained, Contacts: contactData}
 				repoData.Repos = append(repoData.Repos, repo)
 
 			}
