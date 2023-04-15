@@ -18,7 +18,3 @@ type Contact struct {
         URL         string   `json:"htmlurl"`
 }
 
-type ContactData struct {
-        Contacts []Contact   `json:"contact"`
-}
-
