@@ -94,7 +94,7 @@ func main() {
 				commits := github.ListCommits(ctx, r.Owner.GetLogin(), r.GetName(), client)
 				if len(commits) < 1 {
 					maintained = false
-				}	
+				}
 				contributors := github.ListContrib(ctx, r.Owner.GetLogin(), r.GetName(), client)
 				for n, contributor := range contributors {
 					if n > topContributorsCount-1 {
