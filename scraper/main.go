@@ -68,12 +68,11 @@ func contains(value string, items []string) bool {
 
 func main() {
 	loadConfiguration()
-
+	client := github.GitHubAuth(ctx)
 	var repoData types.RepoData
-	var contactData []types.Contact
 	ir := *ignoredRepositories
 	for _, o := range *sOrgs {
-		ghrepos := github.GitHubRepositories(ctx, o)
+		ghrepos := github.GitHubRepositories(ctx, o, client)
 
 		for _, r := range ghrepos {
 			ignored := false
@@ -89,8 +88,9 @@ func main() {
 				}
 			}
 			if !ignored {
+				var contactData []types.Contact
 				topics := r.Topics
-				contributors := github.ListContrib(ctx, r.Owner.GetLogin(), r.GetName())
+				contributors := github.ListContrib(ctx, r.Owner.GetLogin(), r.GetName(), client)
 				for n, contributor := range contributors {
 					if n > topContributorsCount-1 {
 						break
