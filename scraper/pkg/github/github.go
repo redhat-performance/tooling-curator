@@ -13,7 +13,7 @@ import (
 func GitHubAuth(ctx context.Context) *github.Client {
 	token := os.Getenv("GITHUB_AUTH_TOKEN")
 	if token == "" {
-		log.Fatal("Token not detected, please export your oauth token as GITHUB_AITH_TOKEN on the environment")
+		log.Fatal("Token not detected, please export your oauth token as GITHUB_AUTH_TOKEN on the environment")
 	}
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: token})
 	tc := oauth2.NewClient(ctx, ts)
