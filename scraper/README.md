@@ -8,6 +8,7 @@ This scraper tools goes through github Organizations and gets the repositories a
 
 ### Step by Step
 
+0. The scraper requires a GitHub [read-only oauth token](https://github.com/settings/tokens) as environment variable `GITHUB_AUTH_TOKEN`
 1. The scraper will read the [organizations.json](../public/organizations.json) file in the public folder
 2. It will also configure what to ignore bassed on [ignored-repositories.json](../public/ignored-repositories.json) and [ignored-topics.json](../public/ignored-topics.json) files in public folder
 3. It will loop through all `organizations` and all `repositories` to generate the structure the UI needs to display the data.
