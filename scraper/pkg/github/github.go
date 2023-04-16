@@ -5,10 +5,15 @@ import (
 	"log"
         "os"
         "time"
+	"sync"
+	
 
 	"github.com/google/go-github/v51/github"
         "golang.org/x/oauth2"
 )
+
+var Contributors []*github.Contributor
+var Commits []*github.RepositoryCommit
 
 func GitHubAuth(ctx context.Context) *github.Client {
 	token := os.Getenv("GITHUB_AUTH_TOKEN")
@@ -24,7 +29,7 @@ func GitHubAuth(ctx context.Context) *github.Client {
 // Get repos in the org handling pagination
 func GitHubRepositories(ctx context.Context, org string, client *github.Client) []*github.Repository {
 	opts := &github.RepositoryListOptions{}
-        var allrepos []*github.Repository
+	var allrepos []*github.Repository
 	for {	
 		ghrepos, resp, err := client.Repositories.List(ctx, org,  opts)
 		if err != nil {
@@ -39,20 +44,21 @@ func GitHubRepositories(ctx context.Context, org string, client *github.Client) 
 	return allrepos
 }
 
-func ListContrib(ctx context.Context, org string, repository string, client *github.Client)  []*github.Contributor {
+func ListContrib(ctx context.Context, org string, repository string, client *github.Client, wg *sync.WaitGroup) {
+        defer wg.Done()
         opts := &github.ListContributorsOptions{Anon: "false"}
-        contributors, _, err :=  client.Repositories.ListContributors(ctx, org, repository, opts) 
+        var err error
+        Contributors, _, err =  client.Repositories.ListContributors(ctx, org, repository, opts) 
         if err != nil {
                 log.Fatalf("Error getting contributors: %s", err)
         }
-        return contributors
 }
 
-func ListCommits(ctx context.Context, org string, repository string, client *github.Client) []*github.RepositoryCommit {
+func ListCommits(ctx context.Context, org string, repository string, client *github.Client, wg *sync.WaitGroup) {
+	defer wg.Done()
 	opts := &github.CommitsListOptions{Since: time.Now().UTC().AddDate(-1,0,0)}
 	// Handle case when repo is initialized but there are no commits, by always returning commits
-        commits, _, _ :=  client.Repositories.ListCommits(ctx, org, repository, opts)
-        return commits
+        Commits, _, _ =  client.Repositories.ListCommits(ctx, org, repository, opts)
 }
 
 
