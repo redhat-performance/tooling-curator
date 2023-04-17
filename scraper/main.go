@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"sync"
 
 	"github.com/redhat-performance/tooling-curator/scraper/pkg/github"
 	"github.com/redhat-performance/tooling-curator/scraper/pkg/types"
@@ -70,6 +71,7 @@ func main() {
 	loadConfiguration()
 	client := github.GitHubAuth(ctx)
 	var repoData types.RepoData
+	var wg sync.WaitGroup
 	ir := *ignoredRepositories
 	for _, o := range *sOrgs {
 		ghrepos := github.GitHubRepositories(ctx, o, client)
@@ -91,12 +93,15 @@ func main() {
 				var contactData []types.Contact
 				maintained := true
 				topics := r.Topics
-				commits := github.ListCommits(ctx, r.Owner.GetLogin(), r.GetName(), client)
-				if len(commits) < 1 {
-					maintained = false
-				}
-				contributors := github.ListContrib(ctx, r.Owner.GetLogin(), r.GetName(), client)
-				for n, contributor := range contributors {
+				// Calls to github.ListCommits and github.ListContrib don't depend on each other and can be run using goroutines
+				wg.Add(2)
+				go github.ListCommits(ctx, r.Owner.GetLogin(), r.GetName(), client, &wg)
+				go github.ListContrib(ctx, r.Owner.GetLogin(), r.GetName(), client, &wg)
+				wg.Wait()
+				if len(github.Commits) < 1 {
+                                        maintained = false
+                                }
+				for n, contributor := range github.Contributors {
 					if n > topContributorsCount-1 {
 						break
 					}
