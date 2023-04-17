@@ -2,7 +2,7 @@
   "name": "panda",
   "version": "5.0.0",
   "private": true,
-  "homepage": "https://redhat-performance.github.io/tooling-curator",
+  "homepage": ".",
   "dependencies": {
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
