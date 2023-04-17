@@ -21,12 +21,22 @@ func GitHubAuth(ctx context.Context) *github.Client {
         return client
 }
 
+// Get repos in the org handling pagination
 func GitHubRepositories(ctx context.Context, org string, client *github.Client) []*github.Repository {
-	ghrepos, _, err := client.Repositories.List(ctx, org, nil)
-	if err != nil {
-		log.Fatalf("Error getting repositories from GH: %s", err)
+	opts := &github.RepositoryListOptions{}
+        var allrepos []*github.Repository
+	for {	
+		ghrepos, resp, err := client.Repositories.List(ctx, org,  opts)
+		if err != nil {
+			log.Fatalf("Error getting repositories from GH: %s", err)
+		}
+        	allrepos = append(allrepos, ghrepos...)
+		if resp.NextPage == 0 {
+			break
+		}
+		opts.ListOptions.Page = resp.NextPage
 	}
-	return ghrepos
+	return allrepos
 }
 
 func ListContrib(ctx context.Context, org string, repository string, client *github.Client)  []*github.Contributor {
@@ -40,10 +50,8 @@ func ListContrib(ctx context.Context, org string, repository string, client *git
 
 func ListCommits(ctx context.Context, org string, repository string, client *github.Client) []*github.RepositoryCommit {
 	opts := &github.CommitsListOptions{Since: time.Now().UTC().AddDate(-1,0,0)}
-        commits, _, err :=  client.Repositories.ListCommits(ctx, org, repository, opts)
-        if err != nil {
-                log.Fatalf("Error getting commits in last 1 year: %s", err)
-        }
+	// Handle case when repo is initialized but there are no commits, by always returning commits
+        commits, _, _ :=  client.Repositories.ListCommits(ctx, org, repository, opts)
         return commits
 }
 
