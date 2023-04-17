@@ -5,7 +5,6 @@ import (
 	"log"
         "os"
         "time"
-	"sync"
 	
 
 	"github.com/google/go-github/v51/github"
@@ -44,8 +43,7 @@ func GitHubRepositories(ctx context.Context, org string, client *github.Client) 
 	return allrepos
 }
 
-func ListContrib(ctx context.Context, org string, repository string, client *github.Client, wg *sync.WaitGroup) {
-        defer wg.Done()
+func ListContrib(ctx context.Context, org string, repository string, client *github.Client) {
         opts := &github.ListContributorsOptions{Anon: "false"}
         var err error
         Contributors, _, err =  client.Repositories.ListContributors(ctx, org, repository, opts) 
@@ -54,8 +52,7 @@ func ListContrib(ctx context.Context, org string, repository string, client *git
         }
 }
 
-func ListCommits(ctx context.Context, org string, repository string, client *github.Client, wg *sync.WaitGroup) {
-	defer wg.Done()
+func ListCommits(ctx context.Context, org string, repository string, client *github.Client) {
 	opts := &github.CommitsListOptions{Since: time.Now().UTC().AddDate(-1,0,0)}
 	// Handle case when repo is initialized but there are no commits, by always returning commits
         Commits, _, _ =  client.Repositories.ListCommits(ctx, org, repository, opts)

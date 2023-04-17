@@ -95,12 +95,18 @@ func main() {
 				topics := r.Topics
 				// Calls to github.ListCommits and github.ListContrib don't depend on each other and can be run using goroutines
 				wg.Add(2)
-				go github.ListCommits(ctx, r.Owner.GetLogin(), r.GetName(), client, &wg)
-				go github.ListContrib(ctx, r.Owner.GetLogin(), r.GetName(), client, &wg)
+				go func() {
+					defer wg.Done()
+					github.ListCommits(ctx, r.Owner.GetLogin(), r.GetName(), client)
+				}()
+				go func() {
+					defer wg.Done()
+					github.ListContrib(ctx, r.Owner.GetLogin(), r.GetName(), client)
+				}()
 				wg.Wait()
 				if len(github.Commits) < 1 {
-                                        maintained = false
-                                }
+					maintained = false
+				}
 				for n, contributor := range github.Contributors {
 					if n > topContributorsCount-1 {
 						break
