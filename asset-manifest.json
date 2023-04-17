@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.js": "/tooling-curator/static/js/main.07ac53aa.js",
-    "index.html": "/tooling-curator/index.html",
-    "main.07ac53aa.js.map": "/tooling-curator/static/js/main.07ac53aa.js.map"
+    "main.js": "./static/js/main.07ac53aa.js",
+    "index.html": "./index.html",
+    "main.07ac53aa.js.map": "./static/js/main.07ac53aa.js.map"
   },
   "entrypoints": [
     "static/js/main.07ac53aa.js"
