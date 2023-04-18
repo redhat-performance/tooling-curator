@@ -8,6 +8,7 @@ type Repo struct {
 	Labels      []string  `json:"labels"`
         Contacts    []Contact `json:"contacts"`
         Maintained  bool      `json:"maintained"`
+	Archived    bool      `json:"archived"`
 }
 
 type RepoData struct {
