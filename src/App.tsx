@@ -114,6 +114,7 @@ export default class App extends React.Component<AppProps, AppState> {
                                     });
                                 }}
                             />
+                            Filter results: {this.state.repos.filter(this.filter).length}
                         </Box>
                     </Paper>
                 </Box>
