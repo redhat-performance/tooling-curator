@@ -114,7 +114,7 @@ func main() {
 					contacts := types.Contact{Username: *contributor.Login, URL: *contributor.HTMLURL}
 					contactData = append(contactData, contacts)
 				}
-				repo := types.Repo{Org: r.Owner.GetLogin(), Name: r.GetName(), URL: r.GetHTMLURL(), Description: r.GetDescription(), Labels: topics, Maintained: maintained, Contacts: contactData}
+				repo := types.Repo{Org: r.Owner.GetLogin(), Name: r.GetName(), URL: r.GetHTMLURL(), Description: r.GetDescription(), Labels: topics, Maintained: maintained, Contacts: contactData, Archived: r.GetArchived()}
 				repoData.Repos = append(repoData.Repos, repo)
 
 			}
