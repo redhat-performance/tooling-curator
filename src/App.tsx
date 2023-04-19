@@ -6,6 +6,7 @@ import Link from '@mui/material/Link';
 import {
     Chip,
     CircularProgress,
+    FormControlLabel,
     Paper,
     Table,
     TableBody,
@@ -14,6 +15,7 @@ import {
     TableHead,
     TableRow, TextField
 } from "@mui/material";
+import { convertTypeAcquisitionFromJson } from 'typescript';
 
 interface AppProps {
     endpoint: string
@@ -35,6 +37,8 @@ interface Repo {
     description: string
     url: string
     labels: string[]
+    contacts: {username: string, htmlurl: string}[]
+    maintained: string
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -120,6 +124,8 @@ export default class App extends React.Component<AppProps, AppState> {
                                     <TableCell>Repository</TableCell>
                                     <TableCell>Description</TableCell>
                                     <TableCell>Labels</TableCell>
+                                    <TableCell>Contacts</TableCell>
+                                    <TableCell>Maintained</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -141,6 +147,12 @@ export default class App extends React.Component<AppProps, AppState> {
                                             {repo.labels.map((label) => (
                                                 <Chip key={repo.org + " " + repo.name + " " + label} label={label} color="primary" />
                                             ))}
+                                        </TableCell>
+                                        <TableCell>
+                                            {!!repo.contacts && repo.contacts.map((contact,i) => <li key={i}><a href={contact.htmlurl} target="_blank">{contact.username}</a></li>)}
+                                        </TableCell>
+                                        <TableCell>
+                                            {repo.maintained.toString()}
                                         </TableCell>
                                     </TableRow>
                                 ))}
