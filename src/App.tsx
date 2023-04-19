@@ -38,7 +38,8 @@ interface Repo {
     url: string
     labels: string[]
     contacts: {username: string, htmlurl: string}[]
-    maintained: string
+    maintained: boolean
+    archived: boolean
 }
 
 export default class App extends React.Component<AppProps, AppState> {
@@ -84,7 +85,8 @@ export default class App extends React.Component<AppProps, AppState> {
             if (!repo.org.includes(filterWord) &&
                 !repo.name.includes(filterWord) &&
                 !repo.description.includes(filterWord) &&
-                repo.labels.filter((label) => label.includes(filterWord)).length == 0) {
+                repo.labels.filter((label) => label.includes(filterWord)).length == 0 &&
+                !!repo.contacts && repo.contacts.filter((contact) => contact.username.includes(filterWord)).length == 0) {
                 return false
             }
         }
@@ -116,6 +118,9 @@ export default class App extends React.Component<AppProps, AppState> {
                     </Paper>
                 </Box>
                 <Box m={4}>
+                Total repos: {this.state.repos.length}
+                </Box>
+                <Box m={4}>
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 650 }}>
                             <TableHead>
@@ -126,6 +131,7 @@ export default class App extends React.Component<AppProps, AppState> {
                                     <TableCell>Labels</TableCell>
                                     <TableCell>Contacts</TableCell>
                                     <TableCell>Maintained</TableCell>
+                                    <TableCell>Archived</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -153,6 +159,9 @@ export default class App extends React.Component<AppProps, AppState> {
                                         </TableCell>
                                         <TableCell>
                                             {repo.maintained.toString()}
+                                        </TableCell>
+                                        <TableCell>
+                                            {repo.archived.toString()}
                                         </TableCell>
                                     </TableRow>
                                 ))}
