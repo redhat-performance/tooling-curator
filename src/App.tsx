@@ -86,7 +86,7 @@ export default class App extends React.Component<AppProps, AppState> {
                 !repo.name.toLowerCase().includes(filterWord) &&
                 !repo.description.toLowerCase().includes(filterWord) &&
                 repo.labels.filter((label) => label.toLowerCase().includes(filterWord)).length == 0 &&
-                !!repo.contacts && repo.contacts.filter((contact) => contact.username.toLowerCase().includes(filterWord)).length == 0) {
+                (!!repo.contacts && repo.contacts.filter((contact) => contact.username.toLowerCase().includes(filterWord)).length == 0)) {
                 return false
             }
         }
