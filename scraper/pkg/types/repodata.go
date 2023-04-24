@@ -7,7 +7,7 @@ type Repo struct {
 	URL         string    `json:"url"`
 	Labels      []string  `json:"labels"`
         Contacts    []Contact `json:"contacts"`
-        Maintained  bool      `json:"maintained"`
+        Active      bool      `json:"active"`
 	Archived    bool      `json:"archived"`
 }
 

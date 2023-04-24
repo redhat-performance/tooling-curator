@@ -38,7 +38,7 @@ interface Repo {
     url: string
     labels: string[]
     contacts: {username: string, htmlurl: string}[]
-    maintained: boolean
+    active: boolean
     archived: boolean
 }
 
@@ -131,7 +131,7 @@ export default class App extends React.Component<AppProps, AppState> {
                                     <TableCell>Description</TableCell>
                                     <TableCell>Labels</TableCell>
                                     <TableCell>Contacts</TableCell>
-                                    <TableCell>Maintained</TableCell>
+                                    <TableCell>Active</TableCell>
                                     <TableCell>Archived</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -159,7 +159,7 @@ export default class App extends React.Component<AppProps, AppState> {
                                             {!!repo.contacts && repo.contacts.map((contact,i) => <li key={i}><a href={contact.htmlurl} target="_blank">{contact.username}</a></li>)}
                                         </TableCell>
                                         <TableCell>
-                                            {repo.maintained.toString()}
+                                            {repo.active.toString()}
                                         </TableCell>
                                         <TableCell>
                                             {repo.archived.toString()}

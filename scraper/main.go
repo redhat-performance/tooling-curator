@@ -17,6 +17,7 @@ const (
 	ignoredTopicsFile      = "../public/ignored-topics.json"
 	ignoreRepositoriesFile = "../public/ignored-repositories.json"
 	topContributorsCount   = 3
+        lookBack               = 1
 )
 
 var (
@@ -91,13 +92,13 @@ func main() {
 			}
 			if !ignored {
 				var contactData []types.Contact
-				maintained := true
+				active := true
 				topics := r.Topics
 				// Calls to github.ListCommits and github.ListContrib don't depend on each other and can be run using goroutines
 				wg.Add(2)
 				go func() {
 					defer wg.Done()
-					github.ListCommits(ctx, r.Owner.GetLogin(), r.GetName(), client)
+					github.ListCommits(ctx, r.Owner.GetLogin(), r.GetName(), client, lookBack)
 				}()
 				go func() {
 					defer wg.Done()
@@ -105,7 +106,7 @@ func main() {
 				}()
 				wg.Wait()
 				if len(github.Commits) < 1 {
-					maintained = false
+					active = false
 				}
 				for n, contributor := range github.Contributors {
 					if n > topContributorsCount-1 {
@@ -114,7 +115,7 @@ func main() {
 					contacts := types.Contact{Username: *contributor.Login, URL: *contributor.HTMLURL}
 					contactData = append(contactData, contacts)
 				}
-				repo := types.Repo{Org: r.Owner.GetLogin(), Name: r.GetName(), URL: r.GetHTMLURL(), Description: r.GetDescription(), Labels: topics, Maintained: maintained, Contacts: contactData, Archived: r.GetArchived()}
+				repo := types.Repo{Org: r.Owner.GetLogin(), Name: r.GetName(), URL: r.GetHTMLURL(), Description: r.GetDescription(), Labels: topics, Active: active, Contacts: contactData, Archived: r.GetArchived()}
 				repoData.Repos = append(repoData.Repos, repo)
 
 			}
