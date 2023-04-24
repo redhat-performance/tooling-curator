@@ -52,8 +52,8 @@ func ListContrib(ctx context.Context, org string, repository string, client *git
         }
 }
 
-func ListCommits(ctx context.Context, org string, repository string, client *github.Client) {
-	opts := &github.CommitsListOptions{Since: time.Now().UTC().AddDate(-1,0,0)}
+func ListCommits(ctx context.Context, org string, repository string, client *github.Client, lookBack int) {
+	opts := &github.CommitsListOptions{Since: time.Now().UTC().AddDate(-lookBack,0,0)}
 	// Handle case when repo is initialized but there are no commits, by always returning commits
         Commits, _, _ =  client.Repositories.ListCommits(ctx, org, repository, opts)
 }
