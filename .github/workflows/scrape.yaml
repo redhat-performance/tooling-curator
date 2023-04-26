@@ -2,7 +2,7 @@ name: Scrape Github Orgs
 
 on:
   schedule:
-    - cron: '00 * * * *'
+    - cron: '30 * * * *'
 
 jobs:
   scrape:
@@ -42,7 +42,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: repos
-          path: ./repositories.json
+          path: ./
       - name: Update and push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
