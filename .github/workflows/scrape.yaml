@@ -2,10 +2,7 @@ name: Scrape Github Orgs
 
 on:
   schedule:
-    - cron: '10 * * * *'
-
-env:
-  GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - cron: '30 * * * *'
 
 jobs:
   scrape:
@@ -19,6 +16,8 @@ jobs:
         with:
           go-version: 1.18
       - name: Run scrape
+        env:
+          GITHUB_AUTH_TOKEN: ${{ secrets.REDHAT_PERFBOT_SCRAPE_TOKEN }}
         run: |
           cd scraper
           go mod download
