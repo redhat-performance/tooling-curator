@@ -24,8 +24,7 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -36,7 +35,7 @@ jobs:
           npm install gh-pages --save-dev
       - name: deploy to gh-pages
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_EMAIL: perfscale-automation@redhat.com
           GH_USERNAME: redhat-perfbot
         run: |
@@ -44,5 +43,5 @@ jobs:
           git config --global user.email $GH_EMAIL
           #git remote set-url origin https://$GH_USERNAME:${{ secrets.GH_SECRET }}@github.com/redhat-performance/tooling-curator.git
           #git remote set-url origin https://$GH_USERNAME@github.com/redhat-performance/tooling-curator.git
-          git remote set-url origin git@github.com:redhat-performance/tooling-curator.git
+          #git remote set-url origin git@github.com:redhat-performance/tooling-curator.git
           npm run deploy
