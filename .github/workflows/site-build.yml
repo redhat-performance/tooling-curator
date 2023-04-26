@@ -36,11 +36,11 @@ jobs:
           npm install gh-pages --save-dev
       - name: deploy to gh-pages
         env:
-          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_EMAIL: dblack@redhat.com
-          GH_USERNAME: dustinblack
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          #GH_EMAIL: dblack@redhat.com
+          #GH_USERNAME: dustinblack
         run: |
-          git config --global user.name $GH_USERNAME
-          git config --global user.email $GH_EMAIL
-          git remote set-url origin https://$GH_USERNAME:${{ secrets.GH_SECRET }}@github.com/redhat-performance/tooling-curator.git
+          #git config --global user.name $GH_USERNAME
+          #git config --global user.email $GH_EMAIL
+          #git remote set-url origin https://$GH_USERNAME:${{ secrets.GH_SECRET }}@github.com/redhat-performance/tooling-curator.git
           npm run deploy
