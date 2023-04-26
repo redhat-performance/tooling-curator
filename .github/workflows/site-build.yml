@@ -1,17 +1,13 @@
 name: Deploy React Application
 
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
       #  pull_request:
       #    branches: [ main ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build_site:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
     strategy:
@@ -22,9 +18,8 @@ jobs:
       contents: write
       pages: write
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -41,6 +36,5 @@ jobs:
         run: |
           git config --global user.name $GH_USERNAME
           git config --global user.email $GH_EMAIL
-          #git remote set-url origin https://$GH_USERNAME:${{ secrets.GH_SECRET }}@github.com/redhat-performance/tooling-curator.git
           git remote set-url origin https://$GH_USERNAME:$GITHUB_TOKEN@github.com/redhat-performance/tooling-curator.git
           npm run deploy
