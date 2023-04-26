@@ -2,7 +2,7 @@ name: Scrape Github Orgs
 
 on:
   schedule:
-    - cron: '40 * * * *'
+    - cron: '10 02 * * *'
 
 jobs:
   scrape:
