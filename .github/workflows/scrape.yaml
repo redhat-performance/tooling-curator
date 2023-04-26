@@ -1,0 +1,53 @@
+name: Scrape Github Orgs
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+
+env:
+  GITHUB_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  scrape:
+    name: Update repo scrape
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+      - name: Run scrape
+        run: |
+          cd scraper
+          go mod download
+          go run main.go
+      - name: Store repositories.json file
+        uses: actions/upload-artifact@v3
+        with:
+          name: repos
+          path: public/repositories.json
+    update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+      - name: Download repositories.json file
+        uses: actions/download-artifact@v3
+        with:
+          name: repos
+          path: ./repositories.json
+      - name: Update and push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_EMAIL: perfscale-automation@redhat.com
+          GH_USERNAME: redhat-perfbot
+        run: |
+          git config --global user.name $GH_USERNAME
+          git config --global user.email $GH_EMAIL
+          git remote set-url origin https://$GH_USERNAME:$GITHUB_TOKEN@github.com/redhat-performance/tooling-curator.git
+          git commit -am "Periodic repo scrape $(date)"
+          git push
