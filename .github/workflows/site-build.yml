@@ -35,13 +35,12 @@ jobs:
           npm install gh-pages --save-dev
       - name: deploy to gh-pages
         env:
-          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_EMAIL: perfscale-automation@redhat.com
           GH_USERNAME: redhat-perfbot
         run: |
           git config --global user.name $GH_USERNAME
           git config --global user.email $GH_EMAIL
           #git remote set-url origin https://$GH_USERNAME:${{ secrets.GH_SECRET }}@github.com/redhat-performance/tooling-curator.git
-          #git remote set-url origin https://$GH_USERNAME@github.com/redhat-performance/tooling-curator.git
-          #git remote set-url origin git@github.com:redhat-performance/tooling-curator.git
+          git remote set-url origin https://$GH_USERNAME:$GITHUB_TOKEN@github.com/redhat-performance/tooling-curator.git
           npm run deploy
