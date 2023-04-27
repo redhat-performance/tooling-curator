@@ -85,11 +85,11 @@ export default class App extends React.Component<AppProps, AppState> {
     }
     const filterWords = this.state.filter.split(" ").filter((term) => term.length > 0)
     for (let filterWord of filterWords) {
-      if (!repo.org.toLowerCase().includes(filterWord) &&
-        !repo.name.toLowerCase().includes(filterWord) &&
-        !repo.description.toLowerCase().includes(filterWord) &&
-        repo.labels.filter((label) => label.toLowerCase().includes(filterWord)).length == 0 &&
-        (!!repo.contacts ? repo.contacts.filter((contact) => contact.username.toLowerCase().includes(filterWord)).length == 0 : true)) {
+      if (!repo.org.toLowerCase().includes(filterWord.toLowerCase()) &&
+        !repo.name.toLowerCase().includes(filterWord.toLowerCase()) &&
+        !repo.description.toLowerCase().includes(filterWord.toLowerCase()) &&
+        repo.labels.filter((label) => label.toLowerCase().includes(filterWord.toLowerCase())).length == 0 &&
+        (!!repo.contacts ? repo.contacts.filter((contact) => contact.username.toLowerCase().includes(filterWord.toLowerCase())).length == 0 : true)) {
         return false
       }
     }
