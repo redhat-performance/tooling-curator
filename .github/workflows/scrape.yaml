@@ -53,5 +53,5 @@ jobs:
           git config --global user.email $GH_EMAIL
           git remote set-url origin https://$GH_USERNAME:$GITHUB_TOKEN@github.com/redhat-performance/tooling-curator.git
           git add repositories.json
-          git commit -am "Periodic repo scrape $(date)"
+          git diff-index --quiet HEAD || git commit -am "Periodic repo scrape $(date)"
           git push
