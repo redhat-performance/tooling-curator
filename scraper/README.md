@@ -58,22 +58,47 @@ Example
 
 ### Ignore Repositories
 
-The [ignored-repositories.json](../public/ignored-repositories.json) file has a format of an `Organization` key with a string array to input the names of the repositories you want to ignore.
+The [ignored-repositories.json](../public/ignored-repositories.json) file has a format of a json struct with three fields:
+
+- global: An array of strings. All names are ignored in all organizations.
+- ignoreArchived: Boolean if set to true, all archived repos are ignored.
+- orgs: A map of the organizations each with a Struct containing 3 fields:
+
+  - skip-global-ignore: Will ignore the global ignored repo list
+  - skip-global-archived: Will ignore the global `ignoreArchived` value
+  - repos: An array of strings. All names are ignored
 
 Example
 
 ```json
 {
-  "cloud-bulldozer": [
+  "global": [
     ".github"
   ],
-  "redhat-performance": [
-    "cloud-governance"
-  ]
+  "orgs": {
+    "cloud-bulldozer": {
+      "skip-global-ignore": true,
+      "skip-global-archived": true,
+      "repos": []
+    },
+    "redhat-performance": {
+      "repos": [
+        "some-repo"
+      ]
+    }
+  },
+  "ignoreArchived": true
 }
 ```
 
-> At the moment there is not a way to ignore a repository name globably.
+> Hierarchy
+>
+> The more granular the rule biggest the priority.
+>
+> - Repos at the level of orgs["org"].repos always get ignored
+> - `skip-global-ignore` and `skip-global-archived` take priority over the global configs
+> - `global` repos and `ignoreArchived` are the lower priority
+>
 
 ### Ignore Topics
 
