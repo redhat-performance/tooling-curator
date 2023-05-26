@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/redhat-performance/tooling-curator/scraper/pkg/github"
+	"github.com/redhat-performance/tooling-curator/scraper/pkg/helpers"
 	"github.com/redhat-performance/tooling-curator/scraper/pkg/types"
 )
 
@@ -17,14 +18,17 @@ const (
 	ignoredTopicsFile      = "../public/ignored-topics.json"
 	ignoreRepositoriesFile = "../public/ignored-repositories.json"
 	topContributorsCount   = 3
-        lookBack               = 1
+	lookBack               = 1
+	globalKey              = "global"
+	skipGlobalIgnoredKey   = "skip-global-ignore"
+	skipGlobalArchivedKey  = "skip-global-archived"
 )
 
 var (
-	ctx                                      = context.Background()
-	sOrgs               *[]string            = &[]string{}
-	ignoredTopics       *[]string            = &[]string{}
-	ignoredRepositories *map[string][]string = &map[string][]string{}
+	ctx                                            = context.Background()
+	sOrgs               *[]string                  = &[]string{}
+	ignoredTopics       *[]string                  = &[]string{}
+	ignoredRepositories *types.IgnoredRepositories = &types.IgnoredRepositories{}
 )
 
 func loadConfiguration() {
@@ -59,37 +63,16 @@ func loadConfiguration() {
 	}
 }
 
-func contains(value string, items []string) bool {
-	for _, i := range items {
-		if i == value {
-			return true
-		}
-	}
-	return false
-}
-
 func main() {
 	loadConfiguration()
 	client := github.GitHubAuth(ctx)
 	var repoData types.RepoData
 	var wg sync.WaitGroup
-	ir := *ignoredRepositories
 	for _, o := range *sOrgs {
 		ghrepos := github.GitHubRepositories(ctx, o, client)
-
 		for _, r := range ghrepos {
-			ignored := false
-			if iRepos, ok := ir[o]; ok {
-				ignored = contains(r.GetName(), iRepos)
-			}
-			if !ignored {
-				for _, v := range *ignoredTopics {
-					ignored = contains(v, r.Topics)
-					if ignored {
-						break
-					}
-				}
-			}
+			ignored := helpers.Ignored(*r, o, *ignoredRepositories, *ignoredTopics)
+
 			if !ignored {
 				var contactData []types.Contact
 				active := true

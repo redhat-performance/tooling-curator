@@ -1,1 +1,7 @@
-{"cloud-bulldozer": [".github"]}
+{
+  "global": [
+    ".github"
+  ],
+  "orgs": {},
+  "ignoreArchived": true
+}
