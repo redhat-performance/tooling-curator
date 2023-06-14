@@ -18,6 +18,9 @@ import {
   TableHead,
   TableRow, TextField
 } from "@mui/material";
+import Fab from '@mui/material/Fab';
+import ClearIcon from '@mui/icons-material/Clear';
+import Tooltip from "@mui/material/Tooltip";
 import { convertTypeAcquisitionFromJson } from 'typescript';
 
 interface AppProps {
@@ -126,6 +129,21 @@ export default class App extends React.Component<AppProps, AppState> {
                 }}
               />
               Filter results: {this.state.repos.filter(this.filter).length}
+              <Tooltip title="Clear search" placement="bottom-start">
+                <Fab  sx={{
+                          position: 'absolute',
+                          top: 60,
+                          right: 60 }}
+                      size='small'
+                      color='warning'
+
+                      onClick={() =>
+                          this.setState({
+                            filter: ""
+                        })}>
+                  <ClearIcon />
+                </Fab>
+              </Tooltip>
             </Box>
           </Paper>
         </Box>
@@ -163,7 +181,12 @@ export default class App extends React.Component<AppProps, AppState> {
                         </TableCell>
                         <TableCell>
                           {repo.labels.map((label) => (
-                            <Chip key={repo.org + " " + repo.name + " " + label} label={label} color="primary" />
+                            <Chip key={repo.org + " " + repo.name + " " + label} label={label} color="primary"
+                                  onClick={() => {
+                                    this.setState({
+                                      filter: this.state.filter.toString() + " " + label
+                                    })
+                            }}/>
                           ))}
                         </TableCell>
                         <TableCell>
