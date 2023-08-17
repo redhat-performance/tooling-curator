@@ -6,14 +6,18 @@
   "dependencies": {
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
+    "@mui/base": "^5.0.0-beta.9",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "react": "latest",
-    "react-dom": "latest",
+    "axios": "^1.4.0",
+    "https": "^1.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-scripts": "latest",
-    "typescript": "latest"
+    "typescript": "latest",
+    "uuid": "^9.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -36,6 +40,7 @@
     ]
   },
   "devDependencies": {
+    "@types/uuid": "^9.0.2",
     "gh-pages": "^5.0.0"
   }
 }
