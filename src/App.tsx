@@ -16,21 +16,43 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow, TextField
+  TableRow,
+  TextField,
+  IconButton,
 } from "@mui/material";
 import Fab from '@mui/material/Fab';
 import ClearIcon from '@mui/icons-material/Clear';
 import Tooltip from "@mui/material/Tooltip";
 import { convertTypeAcquisitionFromJson } from 'typescript';
+import SendIcon from "@mui/icons-material/Send";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import AndroidTwoToneIcon from "@mui/icons-material/AndroidTwoTone";
+import ChatIcon from "@mui/icons-material/Chat";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+import ShadowMan from "./assets/redhat-shadowman.png";
+import { width } from "@mui/system";
+axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
 
 interface AppProps {
   endpoint: string
 }
 
 interface AppState {
-  loading: boolean
-  filter: string
-  repos: Repo[]
+  loading: boolean;
+  filter: string;
+  repos: Repo[];
+  chatboxvisibility: boolean;
+  messages: Message[];
+  chatContent: string;
+  uuid: string;
+  isTooltipVisible: boolean;
+}
+
+interface Message {
+  isBot: boolean;
+  content: string;
 }
 
 interface Response {
@@ -55,8 +77,19 @@ export default class App extends React.Component<AppProps, AppState> {
     this.state = {
       loading: true,
       filter: "",
-      repos: []
-    }
+      repos: [],
+      chatboxvisibility: false,
+      messages: [
+        {
+          isBot: true,
+          content:
+            "Hello I'm Faro and I'm here to answer your questions on performance and scale tooling",
+        },
+      ],
+      chatContent: "",
+      uuid: uuidv4(),
+      isTooltipVisible: false,
+    };
   }
 
   componentDidMount() {
@@ -108,12 +141,12 @@ export default class App extends React.Component<AppProps, AppState> {
       reposByOrg[repo.org].push(repo);
     }
 
-    return this.state.loading ?
-      <Box sx={{ display: 'flex' }}>
+    return this.state.loading ? (
+      <Box sx={{ display: "flex" }}>
         <CircularProgress />
       </Box>
-      :
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+    ) : (
+      <Box sx={{ display: "flex", flexDirection: "column" }}>
         <Box m={4}>
           <Paper>
             <Box p={4}>
@@ -130,7 +163,7 @@ export default class App extends React.Component<AppProps, AppState> {
               />
               Filter results: {this.state.repos.filter(this.filter).length}
               <Tooltip title="Clear search" placement="bottom-start">
-                <Fab  sx={{
+              <Fab  sx={{
                           position: 'absolute',
                           top: 60,
                           right: 60 }}
@@ -206,6 +239,245 @@ export default class App extends React.Component<AppProps, AppState> {
             </Accordion>
           ))}
         </Box>
+        <div
+          style={{
+            textAlign: "right",
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            zIndex: "999",
+          }}
+        >
+          <IconButton
+            onClick={this.handleHelpclick}
+            style={{
+              color: "#EE0000",
+              backgroundColor: "#c9c9c9",
+              width: "60px",
+              height: "60px",
+            }}
+          >
+            <ChatIcon
+              fontSize="large"
+              style={{ width: "40px", height: "40px" }}
+            />
+          </IconButton>
+        </div>
+        {this.state.chatboxvisibility && (
+          <div
+            style={{
+              height: "600px",
+              width: "400px",
+              position: "fixed",
+              bottom: "40px",
+              right: "60px",
+              zIndex: "1000",
+              borderRadius: "15px",
+              boxShadow: "-2px 2px 10px rgba(0, 0, 0, 0.3)",
+            }}
+          >
+            <div
+              style={{
+                height: "60px",
+                width: "400px",
+                backgroundColor: "#C1121F",
+                borderRadius: "15px 15px 0px 0px",
+                display: "flex",
+                alignItems: "center",
+                color: "white",
+                fontSize: "20px",
+                fontWeight: "bolder",
+                padding: "10px",
+              }}
+            >
+              <img
+                src={ShadowMan}
+                style={{ width: "40px", height: "40px" }}
+              ></img>
+              <span style={{ paddingLeft: "10px", fontSize: "25px" }}>
+                <p>Faro</p>
+              </span>
+              <span style={{ paddingLeft: "10px", fontSize: "12px" }}>
+                <p>(Experimental)</p>
+              </span>
+              <IconButton
+                style={{ marginLeft: "auto" }}
+                onClick={this.handleTooltipToggle}
+              >
+                <MoreVertIcon />
+              </IconButton>
+              {this.state.isTooltipVisible && (
+                <div
+                  className="tooltip-box"
+                  style={{
+                    zIndex: 2,
+                    position: "absolute",
+                    backgroundColor: "lightgrey",
+                    marginTop: "-100px",
+                    borderRadius: "5px",
+                    width: "370px",
+                    height: "30px",
+                    fontSize: "12px",
+                    padding: "3px",
+                    border: "1px solid black",
+                    color: "black",
+                  }}
+                >
+                  To submit feedback please mail:{" "}
+                  <a href={`mailto:smalleni@redhat.com`} color="red">
+                    smalleni@redhat.com
+                  </a>
+                </div>
+              )}
+            </div>
+
+            <div
+              style={{
+                backgroundColor: "#f2f2f2",
+                height: "480px",
+                overflowY: "auto",
+                padding: "10px",
+              }}
+            >
+              {this.state.messages.map((message, index) => (
+                <div
+                  id={index.toString()}
+                  style={{
+                    textAlign: message.isBot ? "left" : "right",
+                    alignItems: "center",
+                  }}
+                >
+                  {message.isBot ? (
+                    <img
+                      src={ShadowMan}
+                      style={{ width: "30px", height: "30px" }}
+                    ></img>
+                  ) : null}
+                  <div
+                    style={{
+                      maxWidth: "300px",
+                      wordWrap: "break-word",
+                      padding: "8px 12px",
+                      backgroundColor: "lightgrey",
+                      borderRadius: "10px",
+                      display: "inline-block",
+                      margin: "10px",
+                      textAlign: "left",
+                    }}
+                  >
+                    {message.content}
+                  </div>
+                  {!message.isBot ? (
+                    <AccountCircleRoundedIcon style={{ width: "30px" }} />
+                  ) : null}
+                </div>
+              ))}
+            </div>
+            <div
+              style={{
+                position: "absolute",
+                bottom: "0px",
+                height: "60px",
+                width: "400px",
+                backgroundColor: "#f2f2f2",
+                borderRadius: "0px 0px 15px 15px",
+                color: "white",
+                borderTop: "3px solid black",
+                alignItems: "center",
+              }}
+            >
+              <TextField
+                label="What's your question"
+                variant="standard"
+                autoComplete="off"
+                style={{
+                  width: "330px",
+                  margin: "0px 0px 0px 10px",
+                }}
+                onKeyDown={this.handleKeyPress}
+                value={this.state.chatContent}
+                onChange={this.handleInputChange}
+              />
+              <IconButton
+                color="primary"
+                style={{
+                  right: "10px",
+                  margin: "10px",
+                  backgroundColor: "lightgrey",
+                  color: "#C1121F",
+                }}
+                onClick={this.handleSend}
+              >
+                <SendIcon />
+              </IconButton>
+            </div>
+          </div>
+        )}
       </Box>
+    );
   }
+
+  handleHelpclick = () => {
+    this.setState({
+      chatboxvisibility: !this.state.chatboxvisibility,
+    });
+  };
+
+  handleSend = () => {
+    if (this.state.chatContent === "") {
+      alert("Empty input, ask your question");
+      return;
+    }
+    if (!this.state.messages[this.state.messages.length - 1].isBot) {
+      alert("Please wait until the bot replies!");
+      return;
+    }
+    console.log(`New message incoming!`);
+    this.setState({
+      messages: [
+        ...this.state.messages,
+        { isBot: false, content: this.state.chatContent },
+      ],
+    });
+
+    axios
+      .get("https://faro-tooling-curator.com/ask", {
+        headers: { uuid: this.state.uuid },
+        params: { query: this.state.chatContent },
+      })
+      .then((res) => {
+        console.log(res);
+        this.setState({
+          messages: [
+            ...this.state.messages,
+            { isBot: true, content: res.data.answer },
+          ],
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    this.setState({
+      chatContent: "",
+    });
+  };
+
+  handleTooltipToggle = () => {
+    this.setState({
+      isTooltipVisible: !this.state.isTooltipVisible,
+    });
+  };
+
+  handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({
+      chatContent: event.target.value,
+    });
+  };
+
+  handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      this.handleSend();
+    }
+  };
 }
