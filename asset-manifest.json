@@ -1,10 +1,11 @@
 {
   "files": {
-    "main.js": "./static/js/main.5a1230af.js",
+    "main.js": "./static/js/main.c132c2b1.js",
+    "static/media/redhat-shadowman.png": "./static/media/redhat-shadowman.e648c1be32f19cdba7ca.png",
     "index.html": "./index.html",
-    "main.5a1230af.js.map": "./static/js/main.5a1230af.js.map"
+    "main.c132c2b1.js.map": "./static/js/main.c132c2b1.js.map"
   },
   "entrypoints": [
-    "static/js/main.5a1230af.js"
+    "static/js/main.c132c2b1.js"
   ]
 }
