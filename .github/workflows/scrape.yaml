@@ -23,7 +23,7 @@ jobs:
           go mod download
           go run main.go
       - name: Store repositories.json file
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: repos
           path: public/repositories.json
@@ -39,7 +39,7 @@ jobs:
       - name: Delete existing repositories.json file
         run: rm -f ./repositories.json
       - name: Download repositories.json file
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: repos
           path: ./
