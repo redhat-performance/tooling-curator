@@ -3,6 +3,9 @@ name: Scrape Github Orgs
 on:
   schedule:
     - cron: '10 02 * * *'
+  push:
+    branches:
+      - "main"
 
 jobs:
   scrape:
